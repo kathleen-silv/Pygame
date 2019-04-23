@@ -45,8 +45,20 @@ class Player(pygame.sprite.Sprite):
         #Centraliza embaixo da tela
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = HEIGHT - 10
-
-
+        
+        #Velocidade da nave
+        self.speedx = 0
+        
+    #Metodo que atualiza a posição da navinha
+    def update(self):
+        self.rect.x += self.speedx
+        
+        #Mantem dentro da tela
+        if self.rect.right > WIDTH:
+            self.tect.right = WIDTH
+        if self.rect.left < 0:
+            self.rect.left = 0
+        
 # Inicialização do Pygame.
 pygame.init()
 pygame.mixer.init()
@@ -71,12 +83,6 @@ player = Player()
 #Cria um grupo de sprites e adiciona a nave.
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
-screen.fill(BLACK)
-screen.blit(background, background_rect)
-all_sprites.draw(screen)
-
-#Depois de desenhar tudo, inverte o display
-pygame.display.flip()
 
 # Comando para evitar travamentos.
 try:
@@ -90,14 +96,34 @@ try:
         
         # Processa os eventos (mouse, teclado, botão, etc).
         for event in pygame.event.get():
-            
             # Verifica se foi fechado
             if event.type == pygame.QUIT:
                 running = False
+                
+            #Verifica se apertou alguma tecla.
+            if event.type == pygame.KEYDOWN:
+                #Dependendo da tecla, altera a velocidade
+                if event.key == pygame.K_LEFT:
+                    player.speedx = -8
+                if event.key == pygame.K_RIGHT:
+                    player.speedx = -8
+                    
+            #Verifica se soltou alguma ecla
+            if event.type == pygame.KEYUP:
+                #dependendo da tecla, altera a velocidade
+                if event.key == pygame.K_LEFT:
+                    player.speedx = 0
+                if event.key == pygame.K_RIGHT:
+                    player.speedx = 0
+                    
+        #Depois de processar os eventos
+        #Atualiza a acao de cada sprite
+        all_sprites.update()
     
         # A cada loop, redesenha o fundo e os sprites
         screen.fill(BLACK)
         screen.blit(background, background_rect)
+        all_sprites.draw(screen)
         
         # Depois de desenhar tudo, inverte o display.
         pygame.display.flip()
